@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PhotoBooth Collage</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo"><a href="#">Photobooth</a></div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#" class="active">Create</a>
+      <a href="#">Gallery</a>
+      <a href="#">Help</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="two-column">
+      <!-- Left Column: Live Kamera -->
+      <div class="column">
+        <div class="card">
+          <h2>Live Kamera</h2>
+          <div class="video-container">
+            <video id="video" autoplay playsinline></video>
+          </div>
+          <div class="controls">
+            <select id="numPhotos">
+              <option value="1">1 Foto</option>
+              <option value="3">3 Foto</option>
+              <option value="6">6 Foto</option>
+            </select>
+            <button id="captureBtn">Ambil Foto</button>
+          </div>
+          <p style="text-align:center; margin-top:8px; color:#666;">
+            Ambil foto sesuai pilihan, foto akan tampil di frame kolase.
+          </p>
+        </div>
+      </div>
+      <!-- Right Column: Collage -->
+      <div class="column">
+        <div class="card">
+          <h2>Frame Kolase</h2>
+          <!-- Pilih warna frame & background -->
+          <div class="color-picker-group">
+            <label for="frameColor">Pilih Warna Frame/Background:</label>
+            <input type="color" id="frameColor" value="#ffffff">
+          </div>
+          <div id="collageWrapper">
+            <div id="collageContainer" class="one-photo">
+              <!-- Foto-foto akan ditampilkan di sini -->
+            </div>
+            <!-- Watermark -->
+            <div id="watermark">SnapZone</div>
+          </div>
+          <div style="text-align: center;">
+            <div id="downloadBtn" class="download-btn" style="display:none;">Download Kolase</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- html2canvas CDN untuk mengonversi collage menjadi gambar -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="function.js"></script>
+</body>
+</html>

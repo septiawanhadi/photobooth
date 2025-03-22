@@ -194,3 +194,9 @@ captureBtn.addEventListener('click', () => {
 
     window.addEventListener('resize', updateCarousel);
   });
+ // Toggle hamburger menu
+   const hamburger = document.getElementById('hamburger');
+   const menu = document.getElementById('menu');
+   hamburger.addEventListener('click', function() {
+     menu.classList.toggle('active');
+   });

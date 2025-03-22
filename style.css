@@ -83,7 +83,7 @@ a:hover{
 .video-container {
   position: relative;
   width: 100%;
-  padding-top: 100%; /* 1:1 aspect ratio */
+  aspect-ratio: 16/9;
   background: #000;
   border-radius: 8px;
   overflow: hidden;
@@ -96,7 +96,6 @@ a:hover{
   height: 100%;
   object-fit: cover;
   transform: scaleX(-1);
-  /* Tanpa transform, sehingga tidak termirroring */
 }
 .controls {
   margin-top: 16px;
@@ -158,7 +157,7 @@ a:hover{
 .photo-cell {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 16/9;
   background: #eee;
   border-radius: 8px;
   overflow: hidden;

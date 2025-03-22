@@ -84,5 +84,12 @@
   <!-- Load html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="function.js"></script>
+  <script>
+    const hamburger = document.getElementById('hamburger');
+   const menu = document.getElementById('menu');
+   hamburger.addEventListener('click', function() {
+     menu.classList.toggle('active');
+   });
+</script>
 </body>
 </html>

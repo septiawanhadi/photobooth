@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gallery - SnapZone</title>
   <link rel="stylesheet" href="style.css">
-  <script src="function.js" defer></script>
+  <script src="function.js"></script>
 </head>
 <body>
   <!-- Navbar (sesuai template file HTML lainnya) -->
@@ -101,33 +101,5 @@
     </section>
   </div>
 
-  <script>
-    // Perbaikan carousel: menghitung lebar masing-masing item
-    document.querySelectorAll('.carousel').forEach(carousel => {
-      const track = carousel.querySelector('.carousel-track');
-      const items = carousel.querySelectorAll('.carousel-item');
-      let currentIndex = 0;
-      const prevButton = carousel.querySelector('.carousel-button.prev');
-      const nextButton = carousel.querySelector('.carousel-button.next');
-
-      function updateCarousel() {
-        // Ambil lebar dari carousel-item (dengan asumsi semua item memiliki lebar yang sama)
-        const itemWidth = carousel.querySelector('.carousel-item').offsetWidth;
-        track.style.transform = 'translateX(' + (-currentIndex * itemWidth) + 'px)';
-      }
-
-      prevButton.addEventListener('click', () => {
-        currentIndex = (currentIndex > 0) ? currentIndex - 1 : items.length - 1;
-        updateCarousel();
-      });
-
-      nextButton.addEventListener('click', () => {
-        currentIndex = (currentIndex < items.length - 1) ? currentIndex + 1 : 0;
-        updateCarousel();
-      });
-
-      window.addEventListener('resize', updateCarousel);
-    });
-  </script>
 </body>
 </html>

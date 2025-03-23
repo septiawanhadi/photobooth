@@ -231,7 +231,6 @@ a:hover{
   width: 100%;
   aspect-ratio: 4 / 3;
   background: #eee;
-  border-radius: 8px;
   overflow: hidden;
   transform: scaleX(-1);
 }
@@ -240,9 +239,8 @@ a:hover{
 .six-photos .photo-cell {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4/3;
   background: #eee;
-  border-radius: 8px;
   overflow: hidden;
   transform: scaleX(-1);
 }

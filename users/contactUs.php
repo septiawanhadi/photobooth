@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact Us - SnapZone</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <nav>
+      <div class="logo">SnapZone.</div>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="menu" id="menu">
+        <li><a href="home.php">Home</a></li>
+        <li><a href="about.php">About Us</a></li>
+        <li><a href="photo.html">Snap Spot</a></li>
+        <li><a href="gallery.php">Gallery</a></li>
+        <li><a href="contactUs.php" class="active">Contact Us</a></li>
+        <li><a href="logout.php" class="active">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Contact Us Content -->
+  <div class="contact-container">
+    <h1>Contact Us</h1>
+    <div class="contact-info">
+      <p><strong>Email:</strong> info@snapzone.com</p>
+      <p><strong>Phone:</strong> +6212345678</p>
+      <p><strong>Address:</strong> Bandung, Indonesia</p>
+    </div>
+    <div class="contact-form">
+      <form action="#" method="POST">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Your Name" required>
+        
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Your Email" required>
+        
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
+        
+        <button type="submit">Send Message</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <p>&copy; 2025 SnapZone. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Toggle hamburger menu
+    const hamburger = document.getElementById('hamburger');
+    const menu = document.getElementById('menu');
+    hamburger.addEventListener('click', function() {
+      menu.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

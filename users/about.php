@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapZone - About</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- nav -->
+   <header class="navbar">
+    <nav>
+      <div class="logo">SnapZone.</div>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="menu" id="menu">
+        <li><a href="home.php"  class="active">Home</a></li>
+        <li><a href="about.php"  class="active">About Us</a></li>
+        <li><a href="photo.html"  class="active">Snap Spot</a></li>
+        <li><a href="gallery.php" class="active">Gallery</a></li>
+        <li><a href="contactUs.php" class="active">Contact Us</a></li>
+        <li><a href="logout.php" class="active">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+    <!-- about header -->
+    <div class="about-header">
+        <h1>Tentang SnapZone</h1>
+        <p>Pengalaman photobooth virtual terbaik untuk Anda.</p>
+    </div>
+    <!-- container -->
+    <div class="container2">
+        <section class="about">
+            <h2>Apa itu SnapZone?</h2>
+            <p>SnapZone adalah platform photobooth online yang memungkinkan Anda menangkap momen berharga yang menyenangkan. Cocok digunakan untuk bersenang-senang dengan teman!</p>
+        </section>
+
+        <section class="how-to-use">
+            <h2>Cara Menggunakan SnapZone</h2>
+            <ol>
+                <li>Klik menu <strong>"Snap Spot"</strong> untuk mengakses kamera.</li>
+                <li>Izinkan akses kamera saat diminta.</li>
+                <li>Pilih frame atau efek favorit Anda.</li>
+                <li>Ambil foto dan unduh hasil photo anda!</li>
+            </ol>
+        </section>
+    </div>
+    <!-- footer -->
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2025 SnapZone. All rights reserved.</p>
+        </div>
+    </footer>
+<script>
+    const hamburger = document.getElementById('hamburger');
+   const menu = document.getElementById('menu');
+   hamburger.addEventListener('click', function() {
+     menu.classList.toggle('active');
+   });
+</script>
+</body>
+</html>

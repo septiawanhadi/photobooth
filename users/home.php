@@ -1,0 +1,72 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapZone - Home</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+  <header class="navbar">
+    <nav>
+      <div class="logo">SnapZone.</div>
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <ul class="menu" id="menu">
+        <li><a href="home.php"  class="active">Home</a></li>
+        <li><a href="about.php"  class="active">About Us</a></li>
+        <li><a href="photo.html"  class="active">Snap Spot</a></li>
+        <li><a href="gallery.php" class="active">Gallery</a></li>
+        <li><a href="contactUs.php"  class="active">Contact Us</a></li>
+        <li><a href="logout.php" class="active">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+    <!-- Hero -->
+    <div class="hero">
+        <h1>Hello, <?php echo htmlspecialchars($_SESSION['username']); ?>! Welcome to SnapZone</h1>
+        <p>Capture your moments with style and fun!</p>
+    </div>
+    <!-- Container -->
+    <div class="container1">
+        <h2>Personalize Your Memories</h2>
+        <p>Customize your photo booth experience with unique and creative themes. Make every moment unforgettable!</p>
+        <div class="try-camera">
+            <h2>Try our Virtual Photobooth!</h2>
+            <p>Click the button below to access our online photobooth and start capturing fun moments instantly.</p>
+            <button class="camera-btn"><a class="camera-btn" href="photo.html"> Start Camera</a></button>
+        </div>
+        <div class="cta">
+            <h2>Want to know more?</h2>
+            <p>Contact us for more information!</p>
+            <button><a href="contactUs.php" class="button">Get In Touch</a></button>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2025 SnapZone. All rights reserved.</p>
+        </div>
+    </footer>
+        <script>
+    const hamburger = document.getElementById('hamburger');
+   const menu = document.getElementById('menu');
+   hamburger.addEventListener('click', function() {
+     menu.classList.toggle('active');
+   });
+</script>
+</body>
+</html>

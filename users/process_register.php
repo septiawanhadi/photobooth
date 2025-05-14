@@ -1,33 +1,37 @@
 <?php
 include 'koneksi.php';
+session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $first_name = trim($_POST['first_name']);
-    $last_name = trim($_POST['last_name']);
     $username = trim($_POST['username']);
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    
+    // Role selalu user
+    $role = 'user';
 
-    if ($password !== $confirm_password) {
-        echo "<script>alert('Passwords do not match. Please try again.'); window.history.back();</script>";
+    // Cek apakah username sudah digunakan
+    $check = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    $check->bind_param("s", $username);
+    $check->execute();
+    $checkResult = $check->get_result();
+
+    if ($checkResult->num_rows > 0) {
+        echo "<script>alert('Username already taken.'); window.history.back();</script>";
         exit;
     }
 
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-    $sql = "INSERT INTO users (first_name, last_name, username, password) VALUES (?, ?, ?, ?)";
+    // Insert user baru
+    $sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $username, $password, $role);
 
-    if ($stmt) {
-        $stmt->bind_param("ssss", $first_name, $last_name, $username, $hashed_password);
-
-        if ($stmt->execute()) {
-            echo "<script>alert('Registration successful! Please login.'); window.location.href='login.php';</script>";
-        } else {
-            echo "<script>alert('Error during registration: " . $stmt->error . "'); window.history.back();</script>";
-        }
+    if ($stmt->execute()) {
+        echo "<script>alert('Registration successful. Please login.'); window.location.href='login.php';</script>";
     } else {
-        echo "<script>alert('Failed to prepare statement.'); window.history.back();</script>";
+        echo "<script>alert('Registration failed.'); window.history.back();</script>";
     }
+
+    $stmt->close();
+    $conn->close();
 }
 ?>

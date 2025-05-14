@@ -20,13 +20,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['role'] = $row['role']; 
 
                 if ($row['role'] == 'admin') {
-                    echo "<script>alert('Welcome Admin!'); window.location.href='../admin/dashboard_admin.php';</script>";
+                    echo "<script>alert('Welcome Admin!'); window.location.href='../admin/admin.php';</script>";
                 } else if ($row['role'] == 'user') {
                     echo "<script>alert('Login successful! Welcome User.'); window.location.href='home.php';</script>";
                 } else {
                     echo "<script>alert('Unknown role. Access denied.'); window.history.back();</script>";
                 }
-
             } else {
                 echo "<script>alert('Incorrect password. Please try again.'); window.history.back();</script>";
             }

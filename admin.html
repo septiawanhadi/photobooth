@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dasbor Admin - Photobooth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        #submit-btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Dasbor Admin Photobooth</h1>
+            <p class="text-gray-500">Kelola bingkai dengan menempelkan URL gambar.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Kolom Kiri: Form Unggah -->
+            <div class="lg:col-span-1">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-4">Tambah Bingkai Baru via URL</h2>
+                    <form id="upload-form" class="space-y-4">
+                        <div>
+                            <label for="frame-name" class="block text-sm font-medium text-gray-700">Nama Bingkai</label>
+                            <input type="text" id="frame-name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label for="layout-type" class="block text-sm font-medium text-gray-700">Tipe Layout</label>
+                            <select id="layout-type" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                                <option value="strip">Strip Klasik</option>
+                                <option value="grid-2x3">Grid 2x3</option>
+                                <option value="single">1 Foto Penuh</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="photo-count" class="block text-sm font-medium text-gray-700">Jumlah Foto</label>
+                            <select id="photo-count" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm">
+                                <option value="1">1</option>
+                                <option value="3">3</option>
+                                <option value="6">6</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="frame-url" class="block text-sm font-medium text-gray-700">URL Gambar Bingkai</label>
+                            <input type="url" id="frame-url" placeholder="Tempelkan tautan Google Drive di sini" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <!-- Pratinjau Gambar -->
+                        <div id="image-preview-container" class="hidden mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Pratinjau:</label>
+                            <img id="image-preview" src="#" alt="Pratinjau Gambar" class="max-h-40 rounded-md border bg-gray-50">
+                        </div>
+                        <div>
+                            <button type="submit" id="submit-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                                Simpan Bingkai
+                            </button>
+                        </div>
+                    </form>
+                    <p id="status" class="mt-4 text-center text-sm"></p>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Daftar Bingkai -->
+            <div class="lg:col-span-2">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-bold mb-4">Daftar Bingkai Tersimpan</h2>
+                    <div id="frames-list" class="space-y-3">
+                        <p class="text-gray-500">Memuat bingkai...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const SUPABASE_URL = 'https://ldatbtyooiwyujsddpcw.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkYXRidHlvb2l3eXVqc2RkcGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMzA1MzcsImV4cCI6MjA2NzgwNjUzN30.Ky4Ovzu1HCLev7_mMnKXSa5Qw80bFFiIIqhRtCKIQ44';
+            
+            const { createClient } = supabase;
+            const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+            const uploadForm = document.getElementById('upload-form');
+            const statusEl = document.getElementById('status');
+            const framesListEl = document.getElementById('frames-list');
+            const urlInput = document.getElementById('frame-url');
+            const previewContainer = document.getElementById('image-preview-container');
+            const previewImage = document.getElementById('image-preview');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            function convertGoogleDriveUrl(url) {
+                const regex = /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
+                const match = url.match(regex);
+                if (match && match[1]) {
+                    const fileId = match[1];
+                    return `https://drive.google.com/uc?export=view&id=${fileId}`;
+                }
+                return url;
+            }
+
+            async function fetchFrames() {
+                framesListEl.innerHTML = `<p class="text-gray-500">Memuat bingkai...</p>`;
+                const { data, error } = await supabaseClient.from('frames').select('*').order('id', { ascending: false });
+
+                if (error) {
+                    console.error("Gagal memuat bingkai:", error);
+                    framesListEl.innerHTML = `<p class="text-red-500">Gagal memuat data.</p>`;
+                    return;
+                }
+
+                if (data.length === 0) {
+                    framesListEl.innerHTML = `<p class="text-gray-500">Belum ada bingkai yang diunggah.</p>`;
+                    return;
+                }
+
+                framesListEl.innerHTML = '';
+                data.forEach(frame => {
+                    const frameEl = document.createElement('div');
+                    frameEl.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-md border';
+                    
+                    frameEl.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <img src="${frame.image_url || 'https://placehold.co/64x64/eee/ccc?text=No+Img'}" alt="${frame.name}" class="w-16 h-16 object-contain border rounded-md bg-white">
+                            <div>
+                                <p class="font-bold text-gray-800">${frame.name || 'Tanpa Nama'}</p>
+                                <p class="text-xs text-gray-500">Layout: ${frame.layout_type || 'N/A'} | Foto: ${frame.photo_count || 'N/A'}</p>
+                            </div>
+                        </div>
+                        <button data-id="${frame.id}" class="delete-btn text-red-500 hover:text-red-700 font-semibold">Hapus</button>
+                    `;
+                    framesListEl.appendChild(frameEl);
+                });
+            }
+
+            uploadForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const frameName = document.getElementById('frame-name').value;
+                const layoutType = document.getElementById('layout-type').value;
+                const photoCount = parseInt(document.getElementById('photo-count').value, 10);
+                const originalUrl = urlInput.value;
+
+                if (!originalUrl) { statusEl.textContent = 'Silakan masukkan URL gambar.'; return; }
+                
+                statusEl.textContent = 'Menyimpan...';
+                statusEl.className = 'text-blue-500';
+                submitBtn.disabled = true;
+
+                try {
+                    const imageUrl = convertGoogleDriveUrl(originalUrl);
+                    
+                    const { error } = await supabaseClient.from('frames').insert([{ name: frameName, layout_type: layoutType, photo_count: photoCount, image_url: imageUrl }]);
+                    
+                    if (error) throw error;
+
+                    statusEl.textContent = 'Sukses! Bingkai ditambahkan.';
+                    statusEl.className = 'text-green-500';
+                    uploadForm.reset();
+                    previewContainer.classList.add('hidden');
+                    fetchFrames();
+                } catch (error) {
+                    console.error('Error:', error);
+                    statusEl.textContent = `Gagal: ${error.message}`;
+                    statusEl.className = 'text-red-500';
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
+
+            urlInput.addEventListener('input', () => {
+                const url = urlInput.value;
+                if (url) {
+                    const directUrl = convertGoogleDriveUrl(url);
+                    previewImage.src = directUrl;
+                    previewContainer.classList.remove('hidden');
+                } else {
+                    previewContainer.classList.add('hidden');
+                }
+            });
+
+            framesListEl.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('delete-btn')) {
+                    const isConfirmed = confirm('Apakah Anda yakin ingin menghapus bingkai ini?');
+                    
+                    if (isConfirmed) {
+                        const frameId = e.target.dataset.id;
+                        try {
+                            const { error } = await supabaseClient.from('frames').delete().eq('id', frameId);
+                            if (error) throw error;
+
+                            statusEl.textContent = 'Bingkai berhasil dihapus.';
+                            statusEl.className = 'text-green-500';
+                            setTimeout(() => { statusEl.textContent = '' }, 3000);
+
+                            fetchFrames();
+                        } catch (error) {
+                            console.error('Gagal menghapus:', error);
+                            alert(`Gagal menghapus bingkai: ${error.message}`);
+                        }
+                    }
+                }
+            });
+            
+            fetchFrames();
+        });
+    </script>
+</body>
+</html>

@@ -83,10 +83,8 @@
         window.addEventListener('load', () => {
             const SUPABASE_URL = 'https://ldatbtyooiwyujsddpcw.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkYXRidHlvb2l3eXVqc2RkcGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIyMzA1MzcsImV4cCI6MjA2NzgwNjUzN30.Ky4Ovzu1HCLev7_mMnKXSa5Qw80bFFiIIqhRtCKIQ44';
-            
             const { createClient } = supabase;
             const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
             const uploadForm = document.getElementById('upload-form');
             const statusEl = document.getElementById('status');
             const framesListEl = document.getElementById('frames-list');
@@ -104,7 +102,6 @@
                 }
                 return url;
             }
-
             async function fetchFrames() {
                 framesListEl.innerHTML = `<p class="text-gray-500">Memuat bingkai...</p>`;
                 const { data, error } = await supabaseClient.from('frames').select('*').order('id', { ascending: false });
@@ -114,12 +111,10 @@
                     framesListEl.innerHTML = `<p class="text-red-500">Gagal memuat data.</p>`;
                     return;
                 }
-
                 if (data.length === 0) {
                     framesListEl.innerHTML = `<p class="text-gray-500">Belum ada bingkai yang diunggah.</p>`;
                     return;
                 }
-
                 framesListEl.innerHTML = '';
                 data.forEach(frame => {
                     const frameEl = document.createElement('div');
@@ -147,8 +142,7 @@
                 const photoCount = parseInt(document.getElementById('photo-count').value, 10);
                 const originalUrl = urlInput.value;
 
-                if (!originalUrl) { statusEl.textContent = 'Silakan masukkan URL gambar.'; return; }
-                
+                if (!originalUrl) { statusEl.textContent = 'Silakan masukkan URL gambar.'; return; }                
                 statusEl.textContent = 'Menyimpan...';
                 statusEl.className = 'text-blue-500';
                 submitBtn.disabled = true;

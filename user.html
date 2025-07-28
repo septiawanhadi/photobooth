@@ -26,25 +26,32 @@
     <div class="photobooth-main-container bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-auto">
 
         <!-- Langkah 1: Pilih Jumlah Foto -->
-        <div id="page-step-1-count" class="page-step p-8 md:p-12">
+        <div id="page-step-1-count" class="page-step p-6 md:p-12">
             <header class="text-center mb-8">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Langkah 1: Pilih Jumlah Foto</h1>
-                <p class="text-gray-500 mt-2">Pilih berapa banyak foto yang ingin Anda ambil dalam satu sesi.</p>
+                <p class="text-gray-500 mt-2">Pilih berapa banyak foto yang ingin Anda ambil.</p>
             </header>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="selection-card cursor-pointer bg-gray-50 p-6 rounded-lg border-2 border-transparent hover:border-indigo-500" data-count="1">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <!-- Opsi 1 Foto -->
+                <div class="selection-card cursor-pointer bg-gray-50 p-4 rounded-lg border-2 border-transparent hover:border-indigo-500" data-count="1">
                     <div class="h-40 flex items-center justify-center bg-gray-200 rounded-md mb-4"><div class="w-24 h-32 bg-gray-400 rounded"></div></div>
                     <h3 class="text-xl font-bold text-center">1 Foto</h3>
                 </div>
-                <div class="selection-card cursor-pointer bg-gray-50 p-6 rounded-lg border-2 border-transparent hover:border-indigo-500" data-count="3">
+                <!-- Opsi 3 Foto -->
+                <div class="selection-card cursor-pointer bg-gray-50 p-4 rounded-lg border-2 border-transparent hover:border-indigo-500" data-count="3">
                     <div class="h-40 flex flex-col items-center justify-around bg-gray-200 rounded-md mb-4 p-2 space-y-1">
-                        <div class="w-20 h-10 bg-gray-400 rounded"></div><div class="w-20 h-10 bg-gray-400 rounded"></div><div class="w-20 h-10 bg-gray-400 rounded"></div>
+                        <div class="w-20 h-10 bg-gray-400 rounded"></div>
+                        <div class="w-20 h-10 bg-gray-400 rounded"></div>
+                        <div class="w-20 h-10 bg-gray-400 rounded"></div>
                     </div>
                     <h3 class="text-xl font-bold text-center">3 Foto</h3>
                 </div>
-                <div class="selection-card cursor-pointer bg-gray-50 p-6 rounded-lg border-2 border-transparent hover:border-indigo-500" data-count="6">
+                <!-- Opsi 6 Foto -->
+                <div class="selection-card cursor-pointer bg-gray-50 p-4 rounded-lg border-2 border-transparent hover:border-indigo-500" data-count="6">
                     <div class="h-40 grid grid-cols-2 grid-rows-3 gap-1 bg-gray-200 rounded-md mb-4 p-2">
-                        <div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div>
+                        <div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div>
+                        <div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div>
+                        <div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div>
                     </div>
                     <h3 class="text-xl font-bold text-center">6 Foto</h3>
                 </div>
@@ -52,38 +59,41 @@
         </div>
 
         <!-- Langkah 2: Pilih Desain Bingkai -->
-        <div id="page-step-2-frame" class="page-step hidden p-8 md:p-12">
+        <div id="page-step-2-frame" class="page-step hidden p-6 md:p-12">
             <header class="text-center mb-8">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Langkah 2: Pilih Desain Bingkai</h1>
-                <p class="text-gray-500 mt-2">Pilih bingkai favorit Anda untuk sesi <span id="frame-photo-count" class="font-bold"></span> foto.</p>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Langkah 2: Pilih Bingkai</h1>
+                <p class="text-gray-500 mt-2">Pilih bingkai untuk sesi <span id="frame-photo-count" class="font-bold"></span> foto Anda.</p>
             </header>
-            <div id="frame-selection-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-[200px]"></div>
-            <div class="flex justify-between mt-8">
-                <button id="back-to-step-1" class="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-300">Kembali</button>
-                <button id="go-to-step-3" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700" disabled>Lanjutkan</button>
+            <div id="frame-selection-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 min-h-[200px]">
+                <!-- Bingkai akan dimuat di sini -->
+            </div>
+            <div class="flex flex-col sm:flex-row justify-between mt-8 gap-4">
+                <button id="back-to-step-1" class="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg hover:bg-gray-300">Kembali</button>
+                <button id="go-to-step-3" class="w-full sm:w-auto bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-indigo-700" disabled>Lanjutkan</button>
             </div>
         </div>
 
         <!-- Langkah 3: Sesi Pemotretan -->
-        <div id="page-step-3-camera" class="page-step hidden p-8 md:p-12">
+        <div id="page-step-3-camera" class="page-step hidden p-6 md:p-12">
             <div class="photobooth-wrapper">
                 <div class="photobooth-container relative w-full bg-gray-900 rounded-xl overflow-hidden mb-4 border-4 border-gray-200">
                     <video id="video" autoplay playsinline class="w-full h-full object-cover" style="transform: scaleX(-1);"></video>
-                    <div id="countdown" class="absolute inset-0 flex items-center justify-center text-9xl font-bold text-white bg-black bg-opacity-50 pointer-events-none opacity-0 transition-opacity"></div>
+                    <div id="countdown" class="absolute inset-0 flex items-center justify-center text-8xl md:text-9xl font-bold text-white bg-black bg-opacity-50 pointer-events-none opacity-0 transition-opacity"></div>
                     <canvas id="collage-canvas" class="w-full h-full object-contain hidden"></canvas>
                     <img id="gif-preview" class="w-full h-full object-contain hidden" />
                 </div>
-                <div id="preview-gallery" class="flex justify-center items-center gap-2 mb-6 min-h-[80px] bg-gray-100 p-2 rounded-lg"></div>
-                <div class="action-buttons space-y-3 md:space-y-0 md:flex md:justify-center md:gap-4">
-                    <button id="back-to-step-2" class="w-full md:w-auto bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-lg">Kembali</button>
-                    <button id="start-btn" class="w-full md:w-auto bg-blue-600 text-white font-bold py-3 px-8 rounded-lg">Mulai Sesi Foto</button>
-                    <button id="gif-btn" class="w-full md:w-auto bg-purple-600 text-white font-bold py-3 px-8 rounded-lg hidden">Buat Versi GIF</button>
-                    <button id="download-btn" class="w-full md:w-auto bg-green-600 text-white font-bold py-3 px-8 rounded-lg hidden">Unduh Kolase</button>
-                    <button id="download-gif-btn" class="w-full md:w-auto bg-green-600 text-white font-bold py-3 px-8 rounded-lg hidden">Unduh GIF</button>
-                    <button id="reset-btn" class="w-full md:w-auto bg-gray-500 text-white font-bold py-3 px-8 rounded-lg hidden">Ulangi</button>
+                <div id="preview-gallery" class="flex justify-center items-center gap-2 mb-6 min-h-[60px] md:min-h-[80px] bg-gray-100 p-2 rounded-lg overflow-x-auto"></div>
+                <div class="action-buttons flex flex-col sm:flex-row sm:justify-center gap-3">
+                    <button id="back-to-step-2" class="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg">Kembali</button>
+                    <button id="start-btn" class="w-full sm:w-auto bg-blue-600 text-white font-bold py-3 px-6 rounded-lg">Mulai Sesi Foto</button>
+                    <button id="gif-btn" class="w-full sm:w-auto bg-purple-600 text-white font-bold py-3 px-6 rounded-lg hidden">Buat GIF</button>
+                    <button id="download-btn" class="w-full sm:w-auto bg-green-600 text-white font-bold py-3 px-6 rounded-lg hidden">Unduh Kolase</button>
+                    <button id="download-gif-btn" class="w-full sm:w-auto bg-green-600 text-white font-bold py-3 px-6 rounded-lg hidden">Unduh GIF</button>
+                    <button id="reset-btn" class="w-full sm:w-auto bg-gray-500 text-white font-bold py-3 px-6 rounded-lg hidden">Ulangi</button>
                 </div>
             </div>
         </div>
+
     </div>
 
     <script>
@@ -263,7 +273,7 @@
                     gifPreview.classList.remove('hidden');
                     downloadBtn.classList.add('hidden');
                     gifBtn.classList.add('hidden');
-                    downloadGifBtn.classList.remove('hidden'); // Menampilkan tombol unduh langsung
+                    downloadGifBtn.classList.remove('hidden');
                     gifBtn.disabled = false;
                     gifBtn.textContent = "Buat Versi GIF";
                 });

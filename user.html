@@ -193,7 +193,40 @@
             }
 
             function runCountdown(seconds) { return new Promise(resolve => { countdownOverlay.style.opacity = '1'; let count = seconds; const interval = setInterval(() => { countdownOverlay.textContent = count; count--; if (count < 0) { clearInterval(interval); countdownOverlay.style.opacity = '0'; resolve(); } }, 1000); }); }
-            function takePhoto() { const tempCanvas = document.createElement('canvas'); tempCanvas.width = video.videoWidth; tempCanvas.height = video.videoHeight; const context = tempCanvas.getContext('2d'); context.translate(tempCanvas.width, 0); context.scale(-1, 1); context.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height); const photoDataUrl = tempCanvas.toDataURL('image/jpeg'); capturedPhotos.push(photoDataUrl); addPhotoToPreview(photoDataUrl); }
+            
+            // --- PERBAIKAN: Fungsi takePhoto diubah untuk memastikan rasio 4:3 ---
+            function takePhoto() {
+                const targetAspectRatio = 4 / 3;
+                const tempCanvas = document.createElement('canvas');
+                const context = tempCanvas.getContext('2d');
+
+                tempCanvas.width = 1280;
+                tempCanvas.height = 960; // 1280 / (4/3)
+
+                const videoRatio = video.videoWidth / video.videoHeight;
+                let sx, sy, sWidth, sHeight;
+
+                if (videoRatio > targetAspectRatio) {
+                    sHeight = video.videoHeight;
+                    sWidth = sHeight * targetAspectRatio;
+                    sx = (video.videoWidth - sWidth) / 2;
+                    sy = 0;
+                } else {
+                    sWidth = video.videoWidth;
+                    sHeight = sWidth / targetAspectRatio;
+                    sx = 0;
+                    sy = (video.videoHeight - sHeight) / 2;
+                }
+
+                context.translate(tempCanvas.width, 0);
+                context.scale(-1, 1);
+                context.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, tempCanvas.width, tempCanvas.height);
+                
+                const photoDataUrl = tempCanvas.toDataURL('image/jpeg');
+                capturedPhotos.push(photoDataUrl);
+                addPhotoToPreview(photoDataUrl);
+            }
+
             function addPhotoToPreview(dataUrl) { const img = document.createElement('img'); img.src = dataUrl; img.className = 'preview-thumbnail h-16 w-auto rounded-md border-2 border-white shadow-md object-cover'; previewGallery.appendChild(img); }
             function downloadCollage() { const link = document.createElement('a'); link.download = `photobooth-hasil-${Date.now()}.jpg`; link.href = collageCanvas.toDataURL('image/jpeg', 0.9); link.click(); }
             

@@ -6,91 +6,83 @@
     <title>Aplikasi Photobooth</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .hidden { display: none; }
-        @keyframes countdown-zoom { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
-        .countdown-animation { animation: countdown-zoom 0.5s ease-in-out; }
-        .preview-thumbnail { animation: fade-in 0.4s ease; }
-        @keyframes fade-in { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        .color-option, .frame-option { transition: transform 0.2s; cursor: pointer; }
-        .color-option:hover, .frame-option:hover { transform: scale(1.1); }
-        .color-option.selected, .frame-option.selected { transform: scale(1.1); box-shadow: 0 0 0 3px #3b82f6; }
-        .photobooth-container { aspect-ratio: var(--camera-aspect-ratio, 4 / 3); }
-        .gemini-btn:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        .page-step { transition: opacity 0.5s ease-in-out; }
+        .selection-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .selection-card:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .frame-card.selected { box-shadow: 0 0 0 4px #4f46e5; transform: scale(1.05); }
+        .loader { border-top-color: #4f46e5; }
+        .action-buttons button:disabled { background-color: #9ca3af; cursor: not-allowed; }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
-    <div class="photobooth-wrapper bg-white rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-3xl text-center">
-        
-        <header class="mb-6">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Photobooth Digital 📸</h1>
-            <p class="text-gray-500 mt-2">Pilih opsimu, berpose, dan unduh hasilnya!</p>
-        </header>
+    <div class="photobooth-main-container bg-white rounded-2xl shadow-xl w-full max-w-4xl mx-auto">
 
-        <div class="main-controls grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div class="space-y-4">
-                 <div>
-                    <label for="photo-count" class="block text-sm font-medium text-gray-700 mb-1 text-left">Jumlah Foto:</label>
-                    <select id="photo-count" class="w-full p-3 border border-gray-300 rounded-lg">
-                        <option value="1">1 Foto</option>
-                        <option value="3">3 Foto</option>
-                        <option value="6">6 Foto</option>
-                    </select>
+        <!-- Langkah 1: Pilih Jumlah Foto -->
+        <div id="page-step-1-count" class="page-step p-8 md:p-12">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Langkah 1: Pilih Jumlah Foto</h1>
+                <p class="text-gray-500 mt-2">Pilih berapa banyak foto yang ingin Anda ambil dalam satu sesi.</p>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="selection-card cursor-pointer bg-gray-50 p-6 rounded-lg border-2 border-transparent hover:border-indigo-500" data-count="1">
+                    <div class="h-40 flex items-center justify-center bg-gray-200 rounded-md mb-4"><div class="w-24 h-32 bg-gray-400 rounded"></div></div>
+                    <h3 class="text-xl font-bold text-center">1 Foto</h3>
                 </div>
-                <div>
-                    <label for="collage-layout" class="block text-sm font-medium text-gray-700 mb-1 text-left">Desain Kolase:</label>
-                    <select id="collage-layout" class="w-full p-3 border border-gray-300 rounded-lg">
-                        <option value="single">1 Foto Penuh</option>
-                        <option value="strip">Strip Klasik (3 Foto)</option>
-                        <option value="grid-2x3">Grid 2x3 (untuk 6 foto)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="space-y-4">
-                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2 text-left">Warna Latar:</label>
-                    <div id="color-palette" class="flex flex-wrap gap-2 justify-start">
-                        <div class="color-option w-8 h-8 rounded-full border-2 border-gray-300 selected" style="background-color: #FFFFFF;" data-color="#FFFFFF"></div>
-                        <div class="color-option w-8 h-8 rounded-full" style="background-color: #000000;" data-color="#000000"></div>
+                <div class="selection-card cursor-pointer bg-gray-50 p-6 rounded-lg border-2 border-transparent hover:border-indigo-500" data-count="3">
+                    <div class="h-40 flex flex-col items-center justify-around bg-gray-200 rounded-md mb-4 p-2 space-y-1">
+                        <div class="w-20 h-10 bg-gray-400 rounded"></div><div class="w-20 h-10 bg-gray-400 rounded"></div><div class="w-20 h-10 bg-gray-400 rounded"></div>
                     </div>
+                    <h3 class="text-xl font-bold text-center">3 Foto</h3>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2 text-left">Bingkai:</label>
-                    <div id="frame-selection" class="flex flex-wrap gap-2 justify-start min-h-[40px]">
-                        <div class="text-xs text-gray-500">Memuat bingkai...</div>
+                <div class="selection-card cursor-pointer bg-gray-50 p-6 rounded-lg border-2 border-transparent hover:border-indigo-500" data-count="6">
+                    <div class="h-40 grid grid-cols-2 grid-rows-3 gap-1 bg-gray-200 rounded-md mb-4 p-2">
+                        <div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div><div class="bg-gray-400 rounded"></div>
                     </div>
+                    <h3 class="text-xl font-bold text-center">6 Foto</h3>
                 </div>
             </div>
         </div>
 
-        <div class="mb-4 p-3 bg-blue-50 rounded-lg">
-            <button id="pose-suggestion-btn" class="gemini-btn w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition-all">✨ Beri Ide Pose!</button>
-            <p id="pose-suggestion-output" class="text-sm text-gray-700 mt-2 text-center"></p>
-        </div>
-
-        <div class="photobooth-container relative w-full bg-gray-900 rounded-xl overflow-hidden mb-4 border-4 border-gray-200">
-            <video id="video" autoplay playsinline class="w-full h-full object-cover" style="transform: scaleX(-1);"></video>
-            <div id="countdown" class="absolute inset-0 flex items-center justify-center text-9xl font-bold text-white bg-black bg-opacity-50 pointer-events-none opacity-0 transition-opacity"></div>
-            <canvas id="collage-canvas" class="w-full h-full object-contain hidden"></canvas>
-            <div id="permission-denied-message" class="hidden absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
-                <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10 l4.55a2 2 0 01.95 1.7V17a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h7.55a2 2 0 011.05.29L15 6z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 19L5 5"></path></svg>
-                <h3 class="text-xl font-bold mb-2">Kamera Tidak Dapat Diakses</h3>
-                <p class="text-sm">Silakan izinkan akses kamera di browser Anda untuk memulai.</p>
+        <!-- Langkah 2: Pilih Desain Bingkai -->
+        <div id="page-step-2-frame" class="page-step hidden p-8 md:p-12">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Langkah 2: Pilih Desain Bingkai</h1>
+                <p class="text-gray-500 mt-2">Pilih bingkai favorit Anda untuk sesi <span id="frame-photo-count" class="font-bold"></span> foto.</p>
+            </header>
+            <div id="frame-selection-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-[200px]"></div>
+            <div class="flex justify-between mt-8">
+                <button id="back-to-step-1" class="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-300">Kembali</button>
+                <button id="go-to-step-3" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700" disabled>Lanjutkan</button>
             </div>
         </div>
 
-        <div id="preview-gallery" class="flex justify-center items-center gap-2 mb-6 min-h-[80px] bg-gray-100 p-2 rounded-lg"></div>
-
-        <div class="action-buttons space-y-3 md:space-y-0 md:space-x-4">
-            <button id="start-btn" class="w-full md:w-auto bg-blue-600 text-white font-bold py-3 px-8 rounded-lg">Mulai Sesi Foto</button>
-            <button id="title-generation-btn" class="gemini-btn w-full md:w-auto bg-purple-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-purple-700 transition-all hidden">✨ Buat Judul Otomatis</button>
-            <button id="download-btn" class="w-full md:w-auto bg-green-600 text-white font-bold py-3 px-8 rounded-lg hidden">Unduh Hasil</button>
-            <button id="reset-btn" class="w-full md:w-auto bg-gray-500 text-white font-bold py-3 px-8 rounded-lg hidden">Ulangi</button>
+        <!-- Langkah 3: Sesi Pemotretan -->
+        <div id="page-step-3-camera" class="page-step hidden p-8 md:p-12">
+            <div class="photobooth-wrapper">
+                <div class="photobooth-container relative w-full bg-gray-900 rounded-xl overflow-hidden mb-4 border-4 border-gray-200">
+                    <video id="video" autoplay playsinline class="w-full h-full object-cover" style="transform: scaleX(-1);"></video>
+                    <div id="countdown" class="absolute inset-0 flex items-center justify-center text-9xl font-bold text-white bg-black bg-opacity-50 pointer-events-none opacity-0 transition-opacity"></div>
+                    <canvas id="collage-canvas" class="w-full h-full object-contain hidden"></canvas>
+                    <img id="gif-preview" class="w-full h-full object-contain hidden" />
+                </div>
+                <div id="preview-gallery" class="flex justify-center items-center gap-2 mb-6 min-h-[80px] bg-gray-100 p-2 rounded-lg"></div>
+                <div class="action-buttons space-y-3 md:space-y-0 md:flex md:justify-center md:gap-4">
+                    <button id="back-to-step-2" class="w-full md:w-auto bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-lg">Kembali</button>
+                    <button id="start-btn" class="w-full md:w-auto bg-blue-600 text-white font-bold py-3 px-8 rounded-lg">Mulai Sesi Foto</button>
+                    <button id="gif-btn" class="w-full md:w-auto bg-purple-600 text-white font-bold py-3 px-8 rounded-lg hidden">Buat Versi GIF</button>
+                    <button id="download-btn" class="w-full md:w-auto bg-green-600 text-white font-bold py-3 px-8 rounded-lg hidden">Unduh Kolase</button>
+                    <button id="download-gif-btn" class="w-full md:w-auto bg-green-600 text-white font-bold py-3 px-8 rounded-lg hidden">Unduh GIF</button>
+                    <button id="reset-btn" class="w-full md:w-auto bg-gray-500 text-white font-bold py-3 px-8 rounded-lg hidden">Ulangi</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -101,145 +93,230 @@
             const { createClient } = supabase;
             const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            const video = document.getElementById('video');
-            const countdownOverlay = document.getElementById('countdown');
-            const collageCanvas = document.getElementById('collage-canvas');
-            const startBtn = document.getElementById('start-btn');
-            const downloadBtn = document.getElementById('download-btn');
-            const resetBtn = document.getElementById('reset-btn');
-            const photoCountSelect = document.getElementById('photo-count');
-            const collageLayoutSelect = document.getElementById('collage-layout');
-            const previewGallery = document.getElementById('preview-gallery');
-            const colorPalette = document.getElementById('color-palette');
-            const frameSelection = document.getElementById('frame-selection');
-            const cameraContainer = document.querySelector('.photobooth-container');
-            const poseSuggestionBtn = document.getElementById('pose-suggestion-btn');
-            const poseSuggestionOutput = document.getElementById('pose-suggestion-output');
-            const titleGenerationBtn = document.getElementById('title-generation-btn');
-            const permissionDeniedMessage = document.getElementById('permission-denied-message');
-
             let stream;
             let capturedPhotos = [];
-            let selectedColor = '#FFFFFF';
-            let selectedFrameUrl = null;
-            let generatedTitle = "";
+            let selectedPhotoCount = 0;
+            let selectedFrame = { url: 'none', layout: 'none' };
+            let generatedGifBlob = null;
+            let gifWorkerUrl = null;
 
-            async function callGemini(prompt) {
-                const apiKey = "AIzaSyD5bz8PrqdTqKjQ0QLqsBjOotlwP2-CAL8"; 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const payload = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+            const pages = document.querySelectorAll('.page-step');
+            const countSelectionCards = document.querySelectorAll('#page-step-1-count .selection-card');
+            const frameSelectionGrid = document.getElementById('frame-selection-grid');
+            const framePhotoCountSpan = document.getElementById('frame-photo-count');
+            const backToStep1Btn = document.getElementById('back-to-step-1');
+            const goToStep3Btn = document.getElementById('go-to-step-3');
+            const backToStep2Btn = document.getElementById('back-to-step-2');
+            const video = document.getElementById('video');
+            const cameraContainer = document.querySelector('.photobooth-container');
+            const startBtn = document.getElementById('start-btn');
+            const countdownOverlay = document.getElementById('countdown');
+            const previewGallery = document.getElementById('preview-gallery');
+            const collageCanvas = document.getElementById('collage-canvas');
+            const downloadBtn = document.getElementById('download-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const gifBtn = document.getElementById('gif-btn');
+            const gifPreview = document.getElementById('gif-preview');
+            const downloadGifBtn = document.getElementById('download-gif-btn');
+
+            async function prepareGifWorker() {
                 try {
-                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
-                    const result = await response.json();
-                    if (result.candidates && result.candidates[0]?.content?.parts?.[0]) {
-                        return result.candidates[0].content.parts[0].text.trim();
-                    } else { throw new Error("Struktur respons API tidak valid."); }
-                } catch (error) { console.error("Gagal memanggil Gemini API:", error); return "Maaf, terjadi kesalahan AI."; }
+                    const response = await fetch('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js');
+                    const workerScriptContent = await response.text();
+                    const blob = new Blob([workerScriptContent], { type: 'application/javascript' });
+                    gifWorkerUrl = URL.createObjectURL(blob);
+                } catch (error) {
+                    console.error('Gagal mempersiapkan GIF worker:', error);
+                    gifBtn.style.display = 'none'; 
+                }
             }
 
+            function showPage(pageId) { pages.forEach(page => page.classList.toggle('hidden', page.id !== pageId)); }
+
+            async function loadFrames(count) {
+                frameSelectionGrid.innerHTML = `<div class="col-span-full flex justify-center items-center"><div class="loader animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div></div>`;
+                goToStep3Btn.disabled = true;
+                const { data, error } = await supabaseClient.from('frames').select('*').eq('photo_count', count);
+                if (error) { console.error('Gagal memuat bingkai:', error); frameSelectionGrid.innerHTML = `<p class="col-span-full text-red-500">Gagal memuat bingkai.</p>`; return; }
+                frameSelectionGrid.innerHTML = '';
+                const noFrame = document.createElement('div');
+                noFrame.className = 'frame-card cursor-pointer p-2 border-2 rounded-lg bg-gray-200 flex items-center justify-center';
+                noFrame.innerHTML = `<p class="font-bold">Polos</p>`;
+                noFrame.dataset.frameUrl = 'none';
+                noFrame.dataset.layoutType = count === 1 ? 'single' : (count === 3 ? 'strip' : 'grid-2x3');
+                frameSelectionGrid.appendChild(noFrame);
+                data.forEach(frame => {
+                    const frameEl = document.createElement('div');
+                    frameEl.className = 'frame-card cursor-pointer p-2 border-2 rounded-lg';
+                    frameEl.innerHTML = `<img src="${frame.image_url}" class="w-full h-full object-contain rounded-md"><p class="text-xs mt-1 text-center font-semibold">${frame.name}</p>`;
+                    frameEl.dataset.frameUrl = frame.image_url;
+                    frameEl.dataset.layoutType = frame.layout_type;
+                    frameSelectionGrid.appendChild(frameEl);
+                });
+            }
+
+            async function initCamera() {
+                startBtn.disabled = true; startBtn.textContent = "Membuka Kamera...";
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 1280, height: 720 }, audio: false });
+                    video.srcObject = stream;
+                    video.onloadedmetadata = () => { const cameraAspectRatio = video.videoWidth / video.videoHeight; cameraContainer.style.setProperty('--camera-aspect-ratio', cameraAspectRatio); };
+                    startBtn.disabled = false; startBtn.textContent = "Mulai Sesi Foto";
+                } catch (err) { console.error("Error accessing camera: ", err); startBtn.textContent = "Kamera Gagal"; }
+            }
+
+            function stopCamera() { if (stream) { stream.getTracks().forEach(track => track.stop()); } }
+            
+            async function startPhotobooth() {
+                startBtn.classList.add('hidden'); backToStep2Btn.classList.add('hidden'); resetBtn.classList.add('hidden'); downloadBtn.classList.add('hidden'); gifBtn.classList.add('hidden');
+                previewGallery.innerHTML = ''; capturedPhotos = [];
+                for (let i = 0; i < selectedPhotoCount; i++) {
+                    await runCountdown(3);
+                    takePhoto();
+                    if (i < selectedPhotoCount - 1) { await new Promise(resolve => setTimeout(resolve, 800)); }
+                }
+                await createCollage();
+                showResultState();
+            }
+
+            function runCountdown(seconds) { return new Promise(resolve => { countdownOverlay.style.opacity = '1'; let count = seconds; const interval = setInterval(() => { countdownOverlay.textContent = count; count--; if (count < 0) { clearInterval(interval); countdownOverlay.style.opacity = '0'; resolve(); } }, 1000); }); }
+            function takePhoto() { const tempCanvas = document.createElement('canvas'); tempCanvas.width = video.videoWidth; tempCanvas.height = video.videoHeight; const context = tempCanvas.getContext('2d'); context.translate(tempCanvas.width, 0); context.scale(-1, 1); context.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height); const photoDataUrl = tempCanvas.toDataURL('image/jpeg'); capturedPhotos.push(photoDataUrl); addPhotoToPreview(photoDataUrl); }
+            function addPhotoToPreview(dataUrl) { const img = document.createElement('img'); img.src = dataUrl; img.className = 'preview-thumbnail h-16 w-auto rounded-md border-2 border-white shadow-md object-cover'; previewGallery.appendChild(img); }
+            function downloadCollage() { const link = document.createElement('a'); link.download = `photobooth-hasil-${Date.now()}.jpg`; link.href = collageCanvas.toDataURL('image/jpeg', 0.9); link.click(); }
+            
             async function createCollage() {
                 if (capturedPhotos.length === 0) return;
-                const layout = collageLayoutSelect.value;
+                const layout = selectedFrame.layout;
                 const ctx = collageCanvas.getContext('2d');
-                const PADDING = 40;
-                const BOTTOM_MARGIN = 100; 
+                const PADDING = 40; const BOTTOM_MARGIN = 100; 
                 const loadedImages = await Promise.all(capturedPhotos.map(dataUrl => new Promise(resolve => { const img = new Image(); img.onload = () => resolve(img); img.src = dataUrl; })));
                 const firstImage = loadedImages[0];
                 const cameraAspectRatio = firstImage.width / firstImage.height;
                 let canvasWidth, canvasHeight;
                 switch(layout) {
                     case 'single':
-                        canvasWidth = 1200; canvasHeight = canvasWidth / cameraAspectRatio;
+                        const singlePhotoWidth = 800; const singlePhotoHeight = singlePhotoWidth / cameraAspectRatio;
+                        canvasWidth = singlePhotoWidth + PADDING * 2; canvasHeight = singlePhotoHeight + PADDING * 2 + BOTTOM_MARGIN;
                         collageCanvas.width = canvasWidth; collageCanvas.height = canvasHeight;
-                        ctx.fillStyle = selectedColor; ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-                        ctx.drawImage(firstImage, 0, 0, canvasWidth, canvasHeight);
+                        ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                        ctx.drawImage(firstImage, PADDING, PADDING, singlePhotoWidth, singlePhotoHeight);
                         break;
                     case 'strip':
                         const stripCellWidth = 600; const stripCellHeight = stripCellWidth / cameraAspectRatio; const numPhotosStrip = Math.min(loadedImages.length, 3);
                         canvasWidth = stripCellWidth + PADDING * 2; canvasHeight = (stripCellHeight * numPhotosStrip) + (PADDING * (numPhotosStrip + 1)) + BOTTOM_MARGIN;
                         collageCanvas.width = canvasWidth; collageCanvas.height = canvasHeight;
-                        ctx.fillStyle = selectedColor; ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-                        loadedImages.slice(0, numPhotosStrip).forEach((img, i) => ctx.drawImage(img, PADDING, PADDING + i * (stripCellHeight + PADDING), stripCellWidth, stripCellHeight));
+                        ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                        loadedImages.slice(0, 3).forEach((img, i) => ctx.drawImage(img, PADDING, PADDING + i * (stripCellHeight + PADDING), stripCellWidth, stripCellHeight));
                         break;
                     case 'grid-2x3':
                         const gridCellWidth = 600; const gridCellHeight = gridCellWidth / cameraAspectRatio;
                         canvasWidth = (gridCellWidth * 2) + (PADDING * 3); canvasHeight = (gridCellHeight * 3) + (PADDING * 4) + BOTTOM_MARGIN;
                         collageCanvas.width = canvasWidth; collageCanvas.height = canvasHeight;
-                        ctx.fillStyle = selectedColor; ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                        ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvasWidth, canvasHeight);
                         loadedImages.slice(0, 6).forEach((img, i) => { const row = Math.floor(i / 2); const col = i % 2; ctx.drawImage(img, PADDING + col * (gridCellWidth + PADDING), PADDING + row * (gridCellHeight + PADDING), gridCellWidth, gridCellHeight); });
                         break;
                 }
-                if (generatedTitle && layout !== 'single') {
-                    ctx.fillStyle = (selectedColor === '#000000') ? 'white' : 'black';
-                    ctx.font = 'bold 48px Inter, sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    const titleY = canvasHeight - (BOTTOM_MARGIN / 2) - PADDING / 2;
-                    ctx.fillText(generatedTitle, canvasWidth / 2, titleY);
+                if (selectedFrame.url !== 'none') {
+                    try {
+                        const frameImg = await new Promise((resolve, reject) => { const img = new Image(); img.crossOrigin = "Anonymous"; img.onload = () => resolve(img); img.onerror = reject; img.src = selectedFrame.url; });
+                        ctx.drawImage(frameImg, 0, 0, canvasWidth, canvasHeight);
+                    } catch (error) { console.error("Gagal memuat bingkai:", error); }
                 }
-                await drawFrame(ctx, collageCanvas.width, collageCanvas.height);
             }
             
-            async function drawFrame(ctx, width, height) {
-                if (selectedFrameUrl === 'none' || !selectedFrameUrl) return;
+            async function createGif() {
+                if (!gifWorkerUrl) { alert('Komponen pembuat GIF belum siap.'); return; }
+                gifBtn.disabled = true; gifBtn.textContent = "Membuat GIF...";
+                let gifFrameUrl = 'none';
                 try {
-                    const frameImg = await new Promise((resolve, reject) => {
-                        const img = new Image();
-                        img.crossOrigin = "Anonymous";
-                        img.onload = () => resolve(img);
-                        img.onerror = () => reject(new Error('Gagal memuat gambar bingkai. Ini mungkin karena masalah CORS dari sumber gambar (misalnya Google Drive).'));
-                        img.src = selectedFrameUrl;
-                    });
-                    ctx.drawImage(frameImg, 0, 0, width, height);
-                } catch (error) {
-                    console.error("Gagal memuat gambar bingkai:", error.message);
-                    alert(`Tidak dapat memuat bingkai dari URL yang dipilih karena batasan keamanan browser (CORS).\n\nSolusi: Coba gunakan bingkai yang diunggah langsung ke Supabase Storage melalui halaman admin, bukan dari URL eksternal seperti Google Drive.`);
+                    const { data, error } = await supabaseClient.from('frames').select('image_url').eq('photo_count', 1).limit(1).single();
+                    if (error) throw error;
+                    if (data) gifFrameUrl = data.image_url;
+                } catch (error) { console.error("Tidak menemukan bingkai 1 foto.", error); }
+                const loadedImages = await Promise.all(capturedPhotos.map(dataUrl => new Promise(resolve => { const img = new Image(); img.onload = () => resolve(img); img.src = dataUrl; })));
+                const firstImage = loadedImages[0];
+                const cameraAspectRatio = firstImage.width / firstImage.height;
+                const PADDING = 40; const BOTTOM_MARGIN = 100;
+                const singlePhotoWidth = 800; const singlePhotoHeight = singlePhotoWidth / cameraAspectRatio;
+                const canvasWidth = singlePhotoWidth + PADDING * 2; const canvasHeight = singlePhotoHeight + PADDING * 2 + BOTTOM_MARGIN;
+                const gif = new GIF({ workers: 2, quality: 10, width: canvasWidth, height: canvasHeight, workerScript: gifWorkerUrl });
+                let frameImgForGif = null;
+                if (gifFrameUrl !== 'none') {
+                    try {
+                        frameImgForGif = await new Promise((resolve, reject) => { const f_img = new Image(); f_img.crossOrigin = "Anonymous"; f_img.onload = () => resolve(f_img); f_img.onerror = reject; f_img.src = gifFrameUrl; });
+                    } catch(e) { console.error("Gagal memuat bingkai untuk GIF", e); }
+                }
+                for (const img of loadedImages) {
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = canvasWidth;
+                    tempCanvas.height = canvasHeight;
+                    const ctx = tempCanvas.getContext('2d');
+                    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                    ctx.drawImage(img, PADDING, PADDING, singlePhotoWidth, singlePhotoHeight);
+                    if (frameImgForGif) { ctx.drawImage(frameImgForGif, 0, 0, canvasWidth, canvasHeight); }
+                    gif.addFrame(tempCanvas, { delay: 500 });
+                }
+                gif.on('finished', function(blob) {
+                    generatedGifBlob = blob;
+                    gifPreview.src = URL.createObjectURL(blob);
+                    collageCanvas.classList.add('hidden');
+                    gifPreview.classList.remove('hidden');
+                    downloadBtn.classList.add('hidden');
+                    gifBtn.classList.add('hidden');
+                    downloadGifBtn.classList.remove('hidden'); // Menampilkan tombol unduh langsung
+                    gifBtn.disabled = false;
+                    gifBtn.textContent = "Buat Versi GIF";
+                });
+                gif.render();
+            }
+
+            function downloadGif() {
+                if (!generatedGifBlob) return;
+                const link = document.createElement('a');
+                link.download = `photobooth-animasi-${Date.now()}.gif`;
+                link.href = URL.createObjectURL(generatedGifBlob);
+                link.click();
+            }
+
+            function showResultState() {
+                video.classList.add('hidden');
+                collageCanvas.classList.remove('hidden');
+                downloadBtn.classList.remove('hidden');
+                resetBtn.classList.remove('hidden');
+                if (selectedPhotoCount > 1) {
+                    gifBtn.classList.remove('hidden');
                 }
             }
-            
-            async function initCamera() {
-                permissionDeniedMessage.classList.add('hidden');
+
+            function resetToInitialState() {
+                capturedPhotos = [];
+                generatedGifBlob = null;
+                previewGallery.innerHTML = '';
                 video.classList.remove('hidden');
-                startBtn.disabled = true;
-                startBtn.textContent = "Membuka Kamera...";
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 1280, height: 720 }, audio: false });
-                    video.srcObject = stream;
-                    video.onloadedmetadata = () => { const cameraAspectRatio = video.videoWidth / video.videoHeight; cameraContainer.style.setProperty('--camera-aspect-ratio', cameraAspectRatio); };
-                    startBtn.disabled = false;
-                    startBtn.textContent = "Mulai Sesi Foto";
-                } catch (err) {
-                    console.error("Error accessing camera: ", err);
-                    video.classList.add('hidden');
-                    permissionDeniedMessage.classList.remove('hidden');
-                    startBtn.disabled = true;
-                    startBtn.textContent = "Kamera Tidak Tersedia";
-                }
+                collageCanvas.classList.add('hidden');
+                gifPreview.classList.add('hidden');
+                downloadBtn.classList.add('hidden');
+                downloadGifBtn.classList.add('hidden');
+                gifBtn.classList.add('hidden');
+                resetBtn.classList.add('hidden');
+                startBtn.classList.remove('hidden');
+                backToStep2Btn.classList.remove('hidden');
+                initCamera();
             }
 
-            async function startPhotobooth() { resetToInitialState(true); startBtn.disabled = true; startBtn.textContent = "Bersiap..."; const photoCount = parseInt(photoCountSelect.value, 10); for (let i = 0; i < photoCount; i++) { await runCountdown(3); takePhoto(); if (i < photoCount - 1) { await new Promise(resolve => setTimeout(resolve, 800)); } } await createCollage(); showResultState(); }
-            function runCountdown(seconds) { return new Promise(resolve => { countdownOverlay.style.opacity = '1'; let count = seconds; const interval = setInterval(() => { countdownOverlay.textContent = count; countdownOverlay.classList.add('countdown-animation'); setTimeout(() => countdownOverlay.classList.remove('countdown-animation'), 500); count--; if (count < 0) { clearInterval(interval); countdownOverlay.style.opacity = '0'; countdownOverlay.textContent = ''; resolve(); } }, 1000); }); }
-            function takePhoto() { const tempCanvas = document.createElement('canvas'); tempCanvas.width = video.videoWidth; tempCanvas.height = video.videoHeight; const context = tempCanvas.getContext('2d'); context.translate(tempCanvas.width, 0); context.scale(-1, 1); context.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height); const photoDataUrl = tempCanvas.toDataURL('image/jpeg'); capturedPhotos.push(photoDataUrl); addPhotoToPreview(photoDataUrl); }
-            function addPhotoToPreview(dataUrl) { const img = document.createElement('img'); img.src = dataUrl; img.className = 'preview-thumbnail h-16 w-auto rounded-md border-2 border-white shadow-md object-cover'; previewGallery.appendChild(img); }
-            function downloadCollage() { const link = document.createElement('a'); link.download = `photobooth-hasil-${Date.now()}.jpg`; link.href = collageCanvas.toDataURL('image/jpeg', 0.9); link.click(); }
-            function resetToInitialState(isStarting = false) { capturedPhotos = []; generatedTitle = ""; previewGallery.innerHTML = ''; video.classList.remove('hidden'); permissionDeniedMessage.classList.add('hidden'); collageCanvas.classList.add('hidden'); downloadBtn.classList.add('hidden'); resetBtn.classList.add('hidden'); titleGenerationBtn.classList.add('hidden'); if (!isStarting) { startBtn.classList.remove('hidden'); initCamera(); } }
-            function showResultState() { video.classList.add('hidden'); collageCanvas.classList.remove('hidden'); startBtn.classList.add('hidden'); downloadBtn.classList.remove('hidden'); resetBtn.classList.remove('hidden'); titleGenerationBtn.classList.remove('hidden'); }
-            async function loadFrames() { frameSelection.innerHTML = `<div class="text-xs text-gray-500">Memuat bingkai...</div>`; const count = parseInt(photoCountSelect.value, 10); const layout = collageLayoutSelect.value; const { data, error } = await supabaseClient.from('frames').select('*').eq('photo_count', count).eq('layout_type', layout); if (error) { console.error('Gagal memuat bingkai:', error); frameSelection.innerHTML = `<div class="text-xs text-red-500">Gagal memuat bingkai</div>`; return; } frameSelection.innerHTML = ''; const noFrame = document.createElement('div'); noFrame.className = 'frame-option text-xs p-1 h-10 flex items-center justify-center border-2 border-gray-300 rounded-md bg-gray-50 selected'; noFrame.textContent = 'Polos'; noFrame.dataset.frameUrl = 'none'; frameSelection.appendChild(noFrame); selectedFrameUrl = 'none'; if (data.length > 0) { data.forEach(frame => { const frameEl = document.createElement('div'); frameEl.className = 'frame-option text-xs p-1 h-10 flex items-center justify-center border-2 border-gray-300 rounded-md bg-gray-50'; frameEl.textContent = frame.name; frameEl.dataset.frameUrl = frame.image_url; frameSelection.appendChild(frameEl); }); } else { frameSelection.innerHTML += `<div class="text-xs text-gray-400">Tidak ada bingkai untuk opsi ini.</div>`; } }
-
-            // Event Listeners
-            colorPalette.addEventListener('click', (e) => { if (e.target.classList.contains('color-option')) { colorPalette.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected')); e.target.classList.add('selected'); selectedColor = e.target.dataset.color; if (capturedPhotos.length > 0 && !collageCanvas.classList.contains('hidden')) { createCollage(); } } });
-            frameSelection.addEventListener('click', (e) => { const frameEl = e.target.closest('.frame-option'); if (frameEl) { frameSelection.querySelectorAll('.frame-option').forEach(el => el.classList.remove('selected')); frameEl.classList.add('selected'); selectedFrameUrl = frameEl.dataset.frameUrl; if (capturedPhotos.length > 0 && !collageCanvas.classList.contains('hidden')) { createCollage(); } } });
-            photoCountSelect.addEventListener('change', loadFrames); collageLayoutSelect.addEventListener('change', loadFrames);
+            countSelectionCards.forEach(card => card.addEventListener('click', () => { selectedPhotoCount = parseInt(card.dataset.count, 10); framePhotoCountSpan.textContent = selectedPhotoCount; loadFrames(selectedPhotoCount); showPage('page-step-2-frame'); }));
+            frameSelectionGrid.addEventListener('click', (e) => { const selectedCard = e.target.closest('.frame-card'); if (selectedCard) { frameSelectionGrid.querySelectorAll('.frame-card').forEach(card => card.classList.remove('selected')); selectedCard.classList.add('selected'); selectedFrame.url = selectedCard.dataset.frameUrl; selectedFrame.layout = selectedCard.dataset.layoutType; goToStep3Btn.disabled = false; } });
+            backToStep1Btn.addEventListener('click', () => showPage('page-step-1-count'));
+            goToStep3Btn.addEventListener('click', () => { showPage('page-step-3-camera'); initCamera(); });
+            backToStep2Btn.addEventListener('click', () => { stopCamera(); showPage('page-step-2-frame'); });
             startBtn.addEventListener('click', startPhotobooth);
             downloadBtn.addEventListener('click', downloadCollage);
-            resetBtn.addEventListener('click', () => resetToInitialState(false));
-            poseSuggestionBtn.addEventListener('click', async () => { poseSuggestionBtn.disabled = true; poseSuggestionOutput.textContent = "AI sedang berpikir..."; const prompt = "Berikan 3 ide pose yang seru dan singkat untuk photobooth. Pisahkan dengan koma. Contoh: Tanda peace, Muka kaget, Tertawa lepas"; const suggestion = await callGemini(prompt); poseSuggestionOutput.textContent = suggestion; poseSuggestionBtn.disabled = false; });
-            titleGenerationBtn.addEventListener('click', async () => { titleGenerationBtn.disabled = true; titleGenerationBtn.textContent = "Membuat..."; const prompt = "Buat satu judul photobooth yang singkat (2-4 kata), ceria, dan cocok untuk kenang-kenangan."; generatedTitle = await callGemini(prompt); await createCollage(); titleGenerationBtn.disabled = false; titleGenerationBtn.textContent = "✨ Buat Judul Otomatis"; });
+            resetBtn.addEventListener('click', resetToInitialState);
+            gifBtn.addEventListener('click', createGif);
+            downloadGifBtn.addEventListener('click', downloadGif);
 
-            // Inisialisasi
-            initCamera();
-            loadFrames();
+            prepareGifWorker();
+            showPage('page-step-1-count');
         });
     </script>
 </body>

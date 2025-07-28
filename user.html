@@ -19,6 +19,10 @@
         .frame-card.selected { box-shadow: 0 0 0 4px #4f46e5; transform: scale(1.05); }
         .loader { border-top-color: #4f46e5; }
         .action-buttons button:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        /* PERBAIKAN: Menetapkan rasio aspek kontainer secara default */
+        .photobooth-container {
+            aspect-ratio: 4 / 3;
+        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-2 sm:p-4">
@@ -67,14 +71,13 @@
         <!-- Langkah 3: Sesi Pemotretan -->
         <div id="page-step-3-camera" class="page-step hidden p-4 sm:p-6 md:p-12">
             <div class="photobooth-wrapper">
-                <div class="photobooth-container relative w-full bg-gray-900 rounded-xl overflow-hidden mb-4 border-4 border-gray-200" style="aspect-ratio: var(--camera-aspect-ratio, 4 / 3);">
+                <div class="photobooth-container relative w-full bg-gray-900 rounded-xl overflow-hidden mb-4 border-4 border-gray-200">
                     <video id="video" autoplay playsinline class="w-full h-full object-cover" style="transform: scaleX(-1);"></video>
                     <div id="countdown" class="absolute inset-0 flex items-center justify-center text-8xl md:text-9xl font-bold text-white bg-black bg-opacity-50 pointer-events-none opacity-0 transition-opacity"></div>
                     <canvas id="collage-canvas" class="w-full h-full object-contain hidden"></canvas>
                     <img id="gif-preview" class="w-full h-full object-contain hidden" />
                 </div>
                 <div id="preview-gallery" class="flex justify-start items-center gap-2 mb-6 min-h-[80px] bg-gray-100 p-2 rounded-lg overflow-x-auto"></div>
-                <!-- PERBAIKAN: Tata letak tombol dirombak untuk mobile -->
                 <div class="action-buttons flex flex-col sm:flex-row sm:flex-wrap sm:justify-center gap-3">
                     <button id="back-to-step-2" class="w-full sm:w-auto bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg">Kembali</button>
                     <button id="start-btn" class="w-full sm:w-auto bg-blue-600 text-white font-bold py-3 px-6 rounded-lg">Mulai Sesi Foto</button>
@@ -160,10 +163,23 @@
             async function initCamera() {
                 startBtn.disabled = true; startBtn.textContent = "Membuka Kamera...";
                 try {
-                    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 1280, height: 720 }, audio: false });
+                    // Meminta resolusi landscape secara eksplisit
+                    const constraints = {
+                        video: { 
+                            facingMode: 'user',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        }, 
+                        audio: false 
+                    };
+                    stream = await navigator.mediaDevices.getUserMedia(constraints);
                     video.srcObject = stream;
-                    video.onloadedmetadata = () => { const cameraAspectRatio = video.videoWidth / video.videoHeight; cameraContainer.style.setProperty('--camera-aspect-ratio', cameraAspectRatio); };
-                    startBtn.disabled = false; startBtn.textContent = "Mulai Sesi Foto";
+                    // PERBAIKAN: Menghapus penyesuaian rasio aspek dinamis
+                    // Biarkan CSS yang menangani rasio aspek kontainer secara konsisten
+                    video.onloadedmetadata = () => {
+                        startBtn.disabled = false;
+                        startBtn.textContent = "Mulai Sesi Foto";
+                    };
                 } catch (err) { console.error("Error accessing camera: ", err); startBtn.textContent = "Kamera Gagal"; }
             }
 

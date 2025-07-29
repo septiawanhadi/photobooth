@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi Tiket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --primary-color: #007BFF;
+        --success-color: #28A745;
+        --error-color: #DC3545;
+        --warning-color: #ffc107;
+        --bg-color: #f8f9fa;
+        --card-bg: #ffffff;
+        --text-dark: #212529;
+        --text-light: #6c757d;
+        --ticket-bg: #f1f9ff;
+      }
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      .ticket-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        max-width: 480px;
+        width: 100%;
+        text-align: center;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+      .header {
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        color: white;
+      }
+      .header.loading { background-color: var(--primary-color); }
+      .header.verified { background-color: var(--success-color); }
+      .header.not-found { background-color: var(--error-color); }
+      .icon { font-size: 36px; }
+      h1 { font-size: 24px; font-weight: 700; margin: 0; }
+      .content { padding: 30px; }
+      .ticket-details {
+        background-color: var(--ticket-bg);
+        border: 1px dashed var(--primary-color);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        text-align: left;
+      }
+      h2 {
+        color: var(--primary-color);
+        font-size: 22px;
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 15px;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 10px;
+      }
+      .data-list { list-style: none; padding: 0; margin: 0; }
+      .data-list li {
+        color: var(--text-dark);
+        font-size: 16px;
+        padding: 10px 0;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        align-items: center;
+      }
+      .data-list li:last-child { border-bottom: none; }
+      .data-list strong {
+        color: var(--text-light);
+        width: 120px;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .status {
+        font-weight: 700;
+        font-size: 20px;
+        margin-top: 20px;
+        padding: 12px;
+        border-radius: 8px;
+        display: inline-block;
+      }
+      #loader {
+        padding: 40px;
+        text-align: center;
+        font-size: 18px;
+        color: var(--text-light);
+      }
+      .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="ticket-card" id="ticket-container">
+        <!-- Loader -->
+        <div id="loader">
+            <p>Memuat data tiket...</p>
+        </div>
+
+        <!-- Konten akan diisi oleh JavaScript -->
+    </div>
+
+    <script>
+        // =================================================================
+        //                       KONFIGURASI PENTING
+        // =================================================================
+        // Ganti dengan URL Web App dari Google Apps Script API Anda
+        const URL_API_ANDA = "URL_HASIL_DEPLOY_APPS_SCRIPT_ANDA";
+        // =================================================================
+
+        // Fungsi untuk menampilkan data tiket yang valid
+        function displayVerifiedTicket(data) {
+            const container = document.getElementById('ticket-container');
+            container.innerHTML = `
+                <div class="header verified">
+                    <span class="icon">✔️</span>
+                    <h1>Tiket Valid</h1>
+                </div>
+                <div class="content">
+                    <div class="ticket-details">
+                        <h2 id="tiket-judul">${data.tiket}</h2>
+                        <ul class="data-list">
+                            <li><strong>Nama:</strong> <span id="nama">${data.nama}</span></li>
+                            <li><strong>Instagram:</strong> <span id="instagram">@${data.instagram}</span></li>
+                            <li><strong>Datang Couple:</strong> <span id="couple">${data.couple}</span></li>
+                            <li><strong>Email:</strong> <span id="email">${data.email}</span></li>
+                        </ul>
+                    </div>
+                    <div class="status" style="color: var(--success-color); background-color: #e9f7ec;">STATUS: TERVERIFIKASI</div>
+                </div>
+            `;
+        }
+
+        // Fungsi untuk menampilkan pesan error jika tiket tidak ditemukan
+        function displayNotFound() {
+            const container = document.getElementById('ticket-container');
+            container.innerHTML = `
+                <div class="header not-found">
+                    <span class="icon">❌</span>
+                    <h1>Tiket Tidak Valid</h1>
+                </div>
+                <div class="content">
+                    <p style="color: var(--text-light); font-size: 16px;">ID Tiket yang dipindai tidak terdaftar atau tidak valid. Silakan periksa kembali atau hubungi panitia.</p>
+                    <div class="status" style="color: var(--error-color); background-color: #fbebec;">STATUS: TIDAK DITEMUKAN</div>
+                </div>
+            `;
+        }
+        
+        // Fungsi utama yang berjalan saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            const loader = document.getElementById('loader');
+            const params = new URLSearchParams(window.location.search);
+            const ticketId = params.get('id');
+
+            if (!ticketId) {
+                loader.innerHTML = '<p style="color: var(--error-color);">Error: ID Tiket tidak ada di URL.</p>';
+                return;
+            }
+            
+            if (URL_API_ANDA === "URL_HASIL_DEPLOY_APPS_SCRIPT_ANDA") {
+                 loader.innerHTML = '<p style="color: var(--error-color);">Error: Harap konfigurasikan URL_API_ANDA di dalam file HTML.</p>';
+                return;
+            }
+
+            // Panggil API
+            fetch(`${URL_API_ANDA}?id=${ticketId}`)
+                .then(response => response.json())
+                .then(result => {
+                    loader.classList.add('hidden'); // Sembunyikan loader
+                    if (result && result.success) {
+                        displayVerifiedTicket(result.data);
+                    } else {
+                        displayNotFound();
+                    }
+                })
+                .catch(error => {
+                    loader.classList.add('hidden');
+                    displayNotFound();
+                    console.error('Error fetching data:', error);
+                });
+        });
+    </script>
+
+</body>
+</html>
